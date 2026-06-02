@@ -57,11 +57,11 @@
 
         Console.WriteLine();
         Console.WriteLine("Buildings:");
-        Console.WriteLine($"{Barracks.Name}: {Barracks.Level}");
-        Console.WriteLine($"{Farms.Name}: {Farms.Level}");
-        Console.WriteLine($"{Mine.Name}: {Mine.Level}");
-        Console.WriteLine($"{LumberMill.Name}: {LumberMill.Level}");
-        Console.WriteLine($"{StoneQuarry.Name}: {StoneQuarry.Level}");
+        Console.WriteLine($"{Barracks.Name}: Level {Barracks.Level}");
+        Console.WriteLine($"{Farms.Name}: Level {Farms.Level}");
+        Console.WriteLine($"{Mine.Name}: Level {Mine.Level}");
+        Console.WriteLine($"{LumberMill.Name}: Level {LumberMill.Level}");
+        Console.WriteLine($"{StoneQuarry.Name}: Level {StoneQuarry.Level}");
 
         Console.WriteLine();
         Console.WriteLine($"{TrainingBarracks.Name}: Level {TrainingBarracks.Level}");

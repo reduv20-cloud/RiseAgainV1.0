@@ -112,6 +112,7 @@ public class Game
             Console.WriteLine("8. Upgrade Lumber Mill");
             Console.WriteLine("9. Show LevelUp Requirements");
             Console.WriteLine("10. Train Soldier");
+            Console.WriteLine("11. Upgrade Training Barracks");
             Console.WriteLine("0. Save and return to main menu");
             Console.WriteLine();
 
@@ -175,6 +176,12 @@ public class Game
 
                 case "10":
                     ShowTrainSoldierMenu();
+                    SaveSystem.SaveGame(kingdom);
+                    Pause();
+                    break;
+
+                case "11":
+                    kingdom!.UpgradeBuiling(kingdom.TrainingBarracks);
                     SaveSystem.SaveGame(kingdom);
                     Pause();
                     break;
