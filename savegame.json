@@ -1,0 +1,29 @@
+{
+  "Day": 1,
+  "Level": 1,
+  "Population": 10,
+  "Food": 50,
+  "Wood": 30,
+  "Stone": 20,
+  "Gold": 20,
+  "Barracks": {
+    "Name": "Barracks",
+    "Level": 1
+  },
+  "Farms": {
+    "Name": "Farms",
+    "Level": 1
+  },
+  "Mine": {
+    "Name": "Mine",
+    "Level": 1
+  },
+  "StoneQuarry": {
+    "Name": "Stone Quarry",
+    "Level": 1
+  },
+  "LumberMill": {
+    "Name": "Lumber Mill",
+    "Level": 1
+  }
+}
