@@ -1,5 +1,5 @@
 ﻿/*Kingdom kingdom = new Kingdom();
-
+Un comentariu pentru primul commit serios!
 kingdom.ShowStatus();
 
 SaveSystem.SaveGame(kingdom);
