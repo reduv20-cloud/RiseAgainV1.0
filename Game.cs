@@ -107,7 +107,7 @@ public class Game
             Console.WriteLine("3. Level Up Kingdom");
             Console.WriteLine("4. Upgrade Farm");
             Console.WriteLine("5. Upgrade Barracks");
-            Console.WriteLine("6. Upgrade Mine");
+            Console.WriteLine("6. Upgrade Gold Mine");
             Console.WriteLine("7. Upgrade Stone Quarry");
             Console.WriteLine("8. Upgrade Lumber Mill");
             Console.WriteLine("9. Show LevelUp Requirements");
@@ -153,7 +153,7 @@ public class Game
                     break;
 
                 case "6":
-                    kingdom!.UpgradeBuiling(kingdom.Mine);
+                    kingdom!.UpgradeBuiling(kingdom.GoldMine);
                     SaveSystem.SaveGame(kingdom);
                     Pause();
                     break;

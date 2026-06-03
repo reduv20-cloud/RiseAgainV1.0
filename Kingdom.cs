@@ -9,22 +9,22 @@
     public int Stone { get; set; } = 20;
     public int Gold { get; set; } = 20;
     public int Iron { get; set; } = 10;
-
     public Building Barracks { get; set; }
     public Building Farms { get; set; }
-    public Building Mine { get; set; }
+    public Building GoldMine { get; set; }
     public Building StoneQuarry { get; set; }
     public Building LumberMill { get; set; }
     public Building TrainingBarracks { get; set; }
     public Building IronMine { get; set; }
 
     public bool IsGameOver { get; set; } = false;
+    public int ThreatLevel { get; set; } = 0;
 
     public Kingdom()
     {
         Barracks = new Building("Barracks", 1);
         Farms = new Building("Farms", 1);
-        Mine = new Building("Mine", 1);
+        GoldMine = new Building("Gold Mine", 1);
         IronMine = new Building("Iron Mine", 1);
         StoneQuarry = new Building("Stone Quarry", 1);
         LumberMill = new Building("Lumber Mill", 1);
@@ -50,6 +50,9 @@
         Console.WriteLine("===============================");
         Console.WriteLine($"Day: {Day}");
         Console.WriteLine($"Kingdom Level: {Level}");
+        Console.WriteLine($"Threat Level: {ThreatLevel}");
+        Console.WriteLine($"Threat Status: {GetThreatStatus()}");
+        Console.WriteLine($"Attack Chance: {GetAttackChance()}%");
         Console.WriteLine();
         Console.WriteLine($"Population: {Population} / {GetMaxPopulation()}");
         Console.WriteLine($"Food: {Food}");
@@ -63,7 +66,7 @@
         Console.WriteLine("Buildings:");
         Console.WriteLine($"{Barracks.Name}: Level {Barracks.Level}");
         Console.WriteLine($"{Farms.Name}: Level {Farms.Level}");
-        Console.WriteLine($"{Mine.Name}: Level {Mine.Level}");
+        Console.WriteLine($"{GoldMine.Name}: Level {GoldMine.Level}");
         Console.WriteLine($"{IronMine.Name}: Level {IronMine.Level}");
         Console.WriteLine($"{LumberMill.Name}: Level {LumberMill.Level}");
         Console.WriteLine($"{StoneQuarry.Name}: Level {StoneQuarry.Level}");
@@ -187,7 +190,7 @@
         int woodProduced = LumberMill.Level * 4;
         int stoneProduced = StoneQuarry.Level * 3;
         int ironProduced = IronMine.Level * 6;
-        int goldProduced = Mine.Level * 4;
+        int goldProduced = GoldMine.Level * 4;
 
         Food += foodProduced;
         Wood += woodProduced;
@@ -198,7 +201,7 @@
         Console.WriteLine($"Farms produced +{foodProduced} food");
         Console.WriteLine($"Lumber Mill produced +{woodProduced} wood");
         Console.WriteLine($"Stone Quarry produced +{stoneProduced} stone");
-        Console.WriteLine($"Iron Mine produced +{ironProduced}");
+        Console.WriteLine($"Iron Mine produced +{ironProduced} ores");
         Console.WriteLine($"Mine produced +{goldProduced} gold");
 
         Console.WriteLine();
@@ -247,6 +250,8 @@
             Level++;
             Console.WriteLine($"Kingdom reached level {Level}!");
         }
+
+        IncreaseThreat();
 
         Day++;
     }
@@ -326,7 +331,7 @@
         {
             Farms,
             Barracks,
-            Mine,
+            GoldMine,
             IronMine,
             StoneQuarry,
             LumberMill,
@@ -495,5 +500,56 @@
         }
 
         return totalPower;
+    }
+
+    public void IncreaseThreat()
+    {
+        Random random = new Random();
+
+        int threatIncrease = random.Next(1, 4);
+
+        ThreatLevel += threatIncrease;
+
+        Console.WriteLine($"Threat incresed by {threatIncrease}");
+    }
+
+    public string GetThreatStatus()
+    {
+        if (ThreatLevel < 10)
+        {
+            return "Safe";
+        }
+
+        if (ThreatLevel <20)
+        {
+            return "Tension";
+        }
+
+        if (ThreatLevel < 30)
+        {
+            return "Dangerous";
+        }
+
+        return "Attack likely";
+    }
+
+    public int GetAttackChance()
+    {
+        if (ThreatLevel < 10)
+        {
+            return 0;
+        }
+
+        if (ThreatLevel < 20)
+        {
+            return 10;
+        }
+
+        if (ThreatLevel < 30)
+        {
+            return 25;
+        }
+
+        return 50;
     }
 }
