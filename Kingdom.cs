@@ -8,6 +8,7 @@
     public int Wood { get; set; } = 30;
     public int Stone { get; set; } = 20;
     public int Gold { get; set; } = 20;
+    public int Iron { get; set; } = 10;
 
     public Building Barracks { get; set; }
     public Building Farms { get; set; }
@@ -15,6 +16,7 @@
     public Building StoneQuarry { get; set; }
     public Building LumberMill { get; set; }
     public Building TrainingBarracks { get; set; }
+    public Building IronMine { get; set; }
 
     public bool IsGameOver { get; set; } = false;
 
@@ -23,6 +25,7 @@
         Barracks = new Building("Barracks", 1);
         Farms = new Building("Farms", 1);
         Mine = new Building("Mine", 1);
+        IronMine = new Building("Iron Mine", 1);
         StoneQuarry = new Building("Stone Quarry", 1);
         LumberMill = new Building("Lumber Mill", 1);
         TrainingBarracks = new Building("Training Barracks", 1);
@@ -53,6 +56,7 @@
         Console.WriteLine($"Daily rations needed: {GetDailyFoodConsumtion()}");
         Console.WriteLine($"Wood: {Wood}");
         Console.WriteLine($"Stone: {Stone}");
+        Console.WriteLine($"Iron: {Iron}");
         Console.WriteLine($"Gold: {Gold}");
 
         Console.WriteLine();
@@ -60,12 +64,14 @@
         Console.WriteLine($"{Barracks.Name}: Level {Barracks.Level}");
         Console.WriteLine($"{Farms.Name}: Level {Farms.Level}");
         Console.WriteLine($"{Mine.Name}: Level {Mine.Level}");
+        Console.WriteLine($"{IronMine.Name}: Level {IronMine.Level}");
         Console.WriteLine($"{LumberMill.Name}: Level {LumberMill.Level}");
         Console.WriteLine($"{StoneQuarry.Name}: Level {StoneQuarry.Level}");
 
         Console.WriteLine();
         Console.WriteLine($"{TrainingBarracks.Name}: Level {TrainingBarracks.Level}");
         Console.WriteLine("Army:");
+        Console.WriteLine($"Total Army Power: {GetArmyPower()}");
 
         if ( Army.Count == 0)
         {
@@ -75,6 +81,9 @@
         {
             foreach (Soldier soldier in Army)
             {
+                int basePower = GetSoldierBasePower(soldier.Type);
+                int groupPower = basePower * soldier.Level * soldier.Count;
+
                 Console.WriteLine($"{soldier.Type} Level {soldier.Level}: {soldier.Count}");
             }
         }
@@ -103,24 +112,30 @@
             return;
         }
 
-        int foodCost = GetSoldierCost(10, soldierLevel);
-        int goldCost = GetSoldierCost(4, soldierLevel);
+        int foodCost = 0;
+        int goldCost = 0;
         int woodCost = 0;
         int stoneCost = 0;
+        int ironCost = 0;
 
         if (soldierType == "Archer")
         {
+            foodCost = GetSoldierCost(8, soldierLevel);
             woodCost = GetSoldierCost(6, soldierLevel);
+            goldCost = GetSoldierCost(4, soldierLevel);
         }
         else if (soldierType == "Swordsman")
         {
-            stoneCost = GetSoldierCost(5, soldierLevel);
-            goldCost = GetSoldierCost(8, soldierLevel);
+            foodCost = GetSoldierCost(8, soldierLevel);
+            ironCost = GetSoldierCost(6, soldierLevel);
+            goldCost = GetSoldierCost(6, soldierLevel);
         }
         else if (soldierType == "Infantry")
         {
-            stoneCost = GetSoldierCost(3, soldierLevel);
-            woodCost = GetSoldierCost(2, soldierLevel);
+            foodCost = GetSoldierCost(10, soldierLevel);
+            ironCost = GetSoldierCost(8, soldierLevel);
+            goldCost = GetSoldierCost(6, soldierLevel);
+            woodCost = GetSoldierCost(6, soldierLevel);
         }
         else
         {
@@ -129,10 +144,10 @@
         }
 
         Console.WriteLine($"Train {soldierType} Level {soldierLevel}");
-        Console.WriteLine($"Cost: {foodCost} food, {goldCost} gold, {woodCost} wood, {stoneCost} stone");
+        Console.WriteLine($"Cost: {foodCost} food, {goldCost} gold, {ironCost} iron ores ,{woodCost} wood, {stoneCost} stone");
         Console.WriteLine();
 
-        if (Food < foodCost || Wood < woodCost || Stone < stoneCost || Gold < goldCost)
+        if (Food < foodCost || Wood < woodCost || Stone < stoneCost || Gold < goldCost || Iron < ironCost)
         {
             Console.WriteLine("Not enought resources to train soldier");
             return;
@@ -142,9 +157,10 @@
         Wood -= woodCost;
         Stone -= stoneCost;
         Gold -= goldCost;
+        Iron -= ironCost;
 
         Soldier? exisistingSoldierGroup = Army.FirstOrDefault(
-            soldier => soldier.Type == soldierType && soldier.Level == soldierLevel     //cde retinut procedura de atribuire grup
+            soldier => soldier.Type == soldierType && soldier.Level == soldierLevel     //de retinut procedura de atribuire grup
             );
 
         if (exisistingSoldierGroup == null)
@@ -170,16 +186,19 @@
         int foodProduced = Farms.Level * 10;
         int woodProduced = LumberMill.Level * 4;
         int stoneProduced = StoneQuarry.Level * 3;
+        int ironProduced = IronMine.Level * 6;
         int goldProduced = Mine.Level * 4;
 
         Food += foodProduced;
         Wood += woodProduced;
         Stone += stoneProduced;
+        Iron += ironProduced;
         Gold += goldProduced;
 
         Console.WriteLine($"Farms produced +{foodProduced} food");
         Console.WriteLine($"Lumber Mill produced +{woodProduced} wood");
         Console.WriteLine($"Stone Quarry produced +{stoneProduced} stone");
+        Console.WriteLine($"Iron Mine produced +{ironProduced}");
         Console.WriteLine($"Mine produced +{goldProduced} gold");
 
         Console.WriteLine();
@@ -308,6 +327,7 @@
             Farms,
             Barracks,
             Mine,
+            IronMine,
             StoneQuarry,
             LumberMill,
             TrainingBarracks
@@ -440,5 +460,40 @@
         Console.WriteLine($"Gold: {Gold} / {goldCost}");
         Console.WriteLine("======================================");
 
+    }
+
+    public int GetSoldierBasePower(string soldierType)
+    {
+        if (soldierType == "Archer")
+        { 
+            return 2;
+        }
+
+        if (soldierType == "Swordsman")
+        {
+            return 3;
+        }
+
+        if (soldierType == "Infantry")
+        {
+            return 4;
+        }
+
+        return 0;
+    }
+
+    public int GetArmyPower()
+    {
+        int totalPower = 0;
+
+        foreach (Soldier soldier in Army)
+        {
+            int basePower = GetSoldierBasePower(soldier.Type);
+            int groupPower = basePower * soldier.Level * soldier.Count;
+
+            totalPower += groupPower;
+        }
+
+        return totalPower;
     }
 }
