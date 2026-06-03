@@ -253,6 +253,8 @@
 
         IncreaseThreat();
 
+        TryEnemyAttack();
+
         Day++;
     }
 
@@ -551,5 +553,114 @@
         }
 
         return 50;
+    }
+
+    public void TryEnemyAttack()
+    {
+        int attackChance = GetAttackChance();
+
+        if (attackChance == 0)
+        {
+            return;
+        }
+
+        Random random = new Random();
+
+        int roll = random.Next(1, 101);
+
+        Console.WriteLine($"Enemy attack roll: {roll} / Chance: {attackChance}%");
+
+        if (roll <= attackChance)
+        {
+            int enemyPower = ThreatLevel * 2 + Level * 2;
+
+            Console.WriteLine();
+            Console.WriteLine("Enemy attack!");
+            Console.WriteLine($"Enemy Power: {enemyPower}");
+            Console.WriteLine($"Your army power: {GetArmyPower()}");
+
+            ResolveEnemyAttack(enemyPower);
+        }
+        else
+        {
+            Console.WriteLine();
+        }
+
+    }
+
+    public void ResolveEnemyAttack(int enemyPower)
+    {
+        int armyPower = GetArmyPower();
+
+        if (armyPower >= enemyPower)
+        {
+            int goldReward = enemyPower / 2;
+            int ironReward = enemyPower / 4;
+
+            Gold += goldReward;
+            Iron += ironReward;
+
+            Console.WriteLine();
+            Console.WriteLine("Your army defeted the enemy kingdom successfully");
+            Console.WriteLine($"Loot gained: +{goldReward} gold, +{ironReward} iron ores");
+
+            ReduceThreat(15, 25);
+        }
+        else
+        {
+            int goldLost = enemyPower / 4;
+            int foodLost = enemyPower / 2;
+
+            Gold -= goldLost;
+            Food -= foodLost;
+            Population -= 1;
+
+            if (Gold < 0)
+            {
+                Gold = 0;
+            }
+
+            if (Food < 0)
+            {
+                Food = 0;
+            }
+
+            if (Population < 0)
+            {
+                Population = 0;
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("Your army failed to stop the enemy troops");
+            Console.WriteLine($"Lost: {goldLost} gold, {foodLost} food, 1 population");
+
+            ReduceThreat(5, 10);
+
+            if (Population <= 0)
+            {
+                IsGameOver = true;
+
+                Console.WriteLine();
+                Console.WriteLine("All people have died");
+                Console.WriteLine("GAME OVER");
+            }
+        }
+    }
+
+    private void ReduceThreat(int minAmount, int maxAmount)
+    {
+        Random random = new Random();
+
+        int threatReduction = random.Next(minAmount, maxAmount + 1);
+
+        ThreatLevel -= threatReduction;
+
+        if (ThreatLevel < 0)
+        {
+            ThreatLevel = 0;
+        }
+
+        Console.WriteLine($"Threat reduced by {threatReduction}");
+        Console.WriteLine($"Current Threat Level: {ThreatLevel}");
     }
 }
