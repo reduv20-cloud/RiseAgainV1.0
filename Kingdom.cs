@@ -16,6 +16,8 @@
     public Building LumberMill { get; set; }
     public Building TrainingBarracks { get; set; }
     public Building IronMine { get; set; }
+    public Building WatchTower { get; set; }
+    public Building Wall {  get; set; }
 
     public bool IsGameOver { get; set; } = false;
     public int ThreatLevel { get; set; } = 0;
@@ -29,6 +31,8 @@
         StoneQuarry = new Building("Stone Quarry", 1);
         LumberMill = new Building("Lumber Mill", 1);
         TrainingBarracks = new Building("Training Barracks", 1);
+        WatchTower = new Building("Watch Tower", 1);
+        Wall = new Building("Defensive Wall", 1);
     }
 
     public void NormalizeBuildingNames()
@@ -40,6 +44,8 @@
         StoneQuarry.Name = "Stone Quarry";
         LumberMill.Name = "Lumber Mill";
         TrainingBarracks.Name = "Training Barracks";
+        WatchTower.Name = "Watch Tower";
+        Wall.Name = "Defensive Wall";
     }
 
     public List<Soldier> Army { get; set; } = new List<Soldier>();
@@ -61,6 +67,12 @@
         Console.WriteLine("===============================");
         Console.WriteLine($"Day: {Day}");
         Console.WriteLine($"Kingdom Level: {Level}");
+        Console.WriteLine($"Kingdom Power: {GetKingdomPower()}");
+        Console.WriteLine($"Civil Buildings Power: {GetCivilBuildingPower()}");
+        Console.WriteLine($"Defence Power: {GetDefencePower()}");
+        Console.WriteLine($"Army Power: {GetArmyPower()}");
+
+        Console.WriteLine();
         Console.WriteLine($"Threat Level: {ThreatLevel}");
         Console.WriteLine($"Threat Status: {GetThreatStatus()}");
         Console.WriteLine($"Attack Chance: {GetAttackChance()}%");
@@ -83,9 +95,13 @@
         Console.WriteLine($"{StoneQuarry.Name}: Level {StoneQuarry.Level}");
 
         Console.WriteLine();
+        Console.WriteLine("Defence:");
+        Console.WriteLine($"{WatchTower.Name}: Level {WatchTower.Level}");
+        Console.WriteLine($"{Wall.Name}: Level {Wall.Level}");
+
+        Console.WriteLine();
         Console.WriteLine($"{TrainingBarracks.Name}: Level {TrainingBarracks.Level}");
         Console.WriteLine("Army:");
-        Console.WriteLine($"Total Army Power: {GetArmyPower()}");
 
         if ( Army.Count == 0)
         {
@@ -103,6 +119,46 @@
         }
 
         Console.WriteLine("===============================");
+    }
+
+    public void EnsureBuildingsExisti()
+    {
+        if (Barracks == null)
+        {
+            Barracks = new Building("Barracks", 1);
+        }
+        if (Farms == null)
+        {
+            Farms = new Building("Farms", 1);
+        }
+        if (GoldMine == null)
+        {
+            Farms = new Building("Gold Mine", 1);
+        }
+        if (IronMine == null)
+        {
+            Farms = new Building("Iron Mine", 1);
+        }
+        if (StoneQuarry == null)
+        {
+            Farms = new Building("Stone Quarry", 1);
+        }
+        if (LumberMill == null)
+        {
+            Farms = new Building("Lumber Mill", 1);
+        }
+        if (TrainingBarracks == null)
+        {
+            Farms = new Building("Training Barracks", 1);
+        }
+        if (WatchTower == null)
+        {
+            Farms = new Building("Watch Tower", 1);
+        }
+        if (Wall == null)
+        {
+            Farms = new Building("Defensive Wall", 1);
+        }
     }
 
     public int GetSoldierCost(int baseCost, int soldierLevel)
@@ -348,7 +404,9 @@
             IronMine,
             StoneQuarry,
             LumberMill,
-            TrainingBarracks
+            TrainingBarracks,
+            WatchTower,
+            Wall
         };
     }
 
@@ -602,6 +660,8 @@
     public void ResolveEnemyAttack(int enemyPower)
     {
         int armyPowerBeforeBattle = GetArmyPower();
+        int defensivePower = GetDefencePower();
+        int totalDefencePower = armyPowerBeforeBattle + defensivePower;
 
         bool playerWon = armyPowerBeforeBattle >= enemyPower;
 
@@ -683,6 +743,9 @@
         Console.WriteLine("========== BATTLE REPORT ==========");
         Console.WriteLine($"Enemy Power: {enemyPower}");
         Console.WriteLine($"Army Power Before Battle: {armyPowerBeforeBattle}");
+        Console.WriteLine($"Defense Power: {defensivePower}");
+        Console.WriteLine($"Total Defensive Power: {totalDefencePower}");
+        Console.WriteLine();
         Console.WriteLine($"Army Power After Battle: {armyPowerAfterBattle}");
         Console.WriteLine($"Result: {(playerWon ? "Victory" : "Defeat")}");
         Console.WriteLine();
@@ -785,5 +848,89 @@
         }
 
         return losses;
+    }
+
+    public int GetBuildingBasePower(Building building)
+    {
+        if (building == Farms)
+        {
+            return 4;
+        }
+
+        if (building == Barracks)
+        {
+            return 5;
+        }
+
+        if (building == GoldMine)
+        {
+            return 6;
+        }
+
+        if (building == IronMine)
+        {
+            return 6;
+        }
+
+        if (building == StoneQuarry)
+        {
+            return 5;
+        }
+
+        if (building == LumberMill)
+        {
+            return 4;
+        }
+
+        if (building == TrainingBarracks)
+        {
+            return 8;
+        }
+
+        if (building == WatchTower)
+        {
+            return 10;
+        }
+
+        if (building == Wall)
+        {
+            return 12;
+        }
+
+        return 1;
+        
+    }
+
+    public int GetCivilBuildingPower()
+    {
+        int totalPower = 0;
+
+        foreach (Building building in GetAllBuildings())
+        {
+            if (building == WatchTower || building == Wall)
+            {
+                continue;
+            }
+
+            int basePOwer = GetBuildingBasePower(building);
+            int buildingPower = basePOwer * building.Level;
+
+            totalPower += buildingPower;
+        }
+
+        return totalPower;
+    }
+
+    public int GetDefencePower()
+    {
+        int watchTowerPower = WatchTower.Level * 10;
+        int wallPower = Wall.Level * 15;
+
+        return watchTowerPower + wallPower;
+    }
+
+    public int GetKingdomPower()
+    {
+        return GetDefencePower() + GetCivilBuildingPower() + GetArmyPower();
     }
 }
