@@ -19,6 +19,8 @@ public static class SaveSystem
 
         Kingdom? kingdom = JsonSerializer.Deserialize<Kingdom>(json);
 
+        kingdom!.NormalizeBuildingNames();
+
         if (kingdom == null)
         {
             return new Kingdom();

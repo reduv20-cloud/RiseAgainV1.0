@@ -31,6 +31,17 @@
         TrainingBarracks = new Building("Training Barracks", 1);
     }
 
+    public void NormalizeBuildingNames()
+    {
+        Barracks.Name = "Barracks";
+        Farms.Name = "Farms";
+        GoldMine.Name = "Gold Mine";
+        IronMine.Name = "Iron Mine";
+        StoneQuarry.Name = "Stone Quarry";
+        LumberMill.Name = "Lumber Mill";
+        TrainingBarracks.Name = "Training Barracks";
+    }
+
     public List<Soldier> Army { get; set; } = new List<Soldier>();
 
     public int GetMaxPopulation()
@@ -202,7 +213,7 @@
         Console.WriteLine($"Lumber Mill produced +{woodProduced} wood");
         Console.WriteLine($"Stone Quarry produced +{stoneProduced} stone");
         Console.WriteLine($"Iron Mine produced +{ironProduced} ores");
-        Console.WriteLine($"Mine produced +{goldProduced} gold");
+        Console.WriteLine($"Gold Mine produced +{goldProduced} gold");
 
         Console.WriteLine();
 
@@ -590,30 +601,58 @@
 
     public void ResolveEnemyAttack(int enemyPower)
     {
-        int armyPower = GetArmyPower();
+        int armyPowerBeforeBattle = GetArmyPower();
 
-        if (armyPower >= enemyPower)
+        bool playerWon = armyPowerBeforeBattle >= enemyPower;
+
+        int goldReward = 0;
+        int ironReward = 0;
+
+        int goldLost = 0;
+        int foodLost = 0;
+        int populationLost = 0;
+
+        int soldierLosses = 0;
+        int threatReduction = 0;
+
+        if (playerWon)
         {
-            int goldReward = enemyPower / 2;
-            int ironReward = enemyPower / 4;
+            goldReward = enemyPower / 2;
+            ironReward = enemyPower / 4;
 
             Gold += goldReward;
             Iron += ironReward;
 
-            Console.WriteLine();
-            Console.WriteLine("Your army defeted the enemy kingdom successfully");
-            Console.WriteLine($"Loot gained: +{goldReward} gold, +{ironReward} iron ores");
+            int calculatedLosses = enemyPower / 25;
 
-            ReduceThreat(15, 25);
+            if (calculatedLosses < 1 && GetTotalSoldierCount() > 0)
+            {
+                calculatedLosses = 1;
+            }
+
+            soldierLosses = ApplySoldierLosses(calculatedLosses);
+
+            threatReduction = ReduceThreat(15, 25);
         }
+
         else
         {
-            int goldLost = enemyPower / 4;
-            int foodLost = enemyPower / 2;
+            goldLost = enemyPower / 4;
+            foodLost = enemyPower / 2;
+            populationLost = 1;
 
             Gold -= goldLost;
             Food -= foodLost;
-            Population -= 1;
+            Population -= populationLost;
+
+            int calculatedLosses = enemyPower / 10;
+
+            if (calculatedLosses < 1 && GetTotalSoldierCount() > 0)
+            {
+                calculatedLosses = 1;
+            }
+
+            soldierLosses = ApplySoldierLosses(calculatedLosses);
 
             if (Gold < 0)
             {
@@ -630,24 +669,59 @@
                 Population = 0;
             }
 
-            Console.WriteLine();
-            Console.WriteLine("Your army failed to stop the enemy troops");
-            Console.WriteLine($"Lost: {goldLost} gold, {foodLost} food, 1 population");
-
-            ReduceThreat(5, 10);
+            threatReduction = ReduceThreat(5, 10);
 
             if (Population <= 0)
             {
                 IsGameOver = true;
-
-                Console.WriteLine();
-                Console.WriteLine("All people have died");
-                Console.WriteLine("GAME OVER");
             }
         }
+
+        int armyPowerAfterBattle = GetArmyPower();
+
+        Console.WriteLine();
+        Console.WriteLine("========== BATTLE REPORT ==========");
+        Console.WriteLine($"Enemy Power: {enemyPower}");
+        Console.WriteLine($"Army Power Before Battle: {armyPowerBeforeBattle}");
+        Console.WriteLine($"Army Power After Battle: {armyPowerAfterBattle}");
+        Console.WriteLine($"Result: {(playerWon ? "Victory" : "Defeat")}");
+        Console.WriteLine();
+
+        if (playerWon)
+        {
+            Console.WriteLine("Loot:");
+            Console.WriteLine($"+{goldReward} Gold");
+            Console.WriteLine($"+{ironReward} Iron");
+        }
+
+        else
+        {
+            Console.WriteLine("Losses:");
+            Console.WriteLine($"-{goldLost} Gold");
+            Console.WriteLine($"-{foodLost} Food");
+            Console.WriteLine($"-{populationLost} Population");
+        }
+
+        Console.WriteLine();
+        Console.WriteLine("Army Losses:");
+        Console.WriteLine($"{soldierLosses} soldiers lost");
+
+        Console.WriteLine();
+        Console.WriteLine("Threat:");
+        Console.WriteLine($"Reduced by {threatReduction}");
+        Console.WriteLine($"Current Threat Level: {ThreatLevel}");
+
+        if (IsGameOver)
+        {
+            Console.WriteLine();
+            Console.WriteLine("All people have died");
+            Console.WriteLine("GAME OVER");
+        }
+
+        Console.WriteLine("===================================");
     }
 
-    private void ReduceThreat(int minAmount, int maxAmount)
+    private int ReduceThreat(int minAmount, int maxAmount)
     {
         Random random = new Random();
 
@@ -660,7 +734,56 @@
             ThreatLevel = 0;
         }
 
-        Console.WriteLine($"Threat reduced by {threatReduction}");
-        Console.WriteLine($"Current Threat Level: {ThreatLevel}");
+        return threatReduction;
+    }
+
+    public int GetTotalSoldierCount()
+    {
+        int totalSoldierCount = 0;
+
+        foreach (Soldier soldier in Army)
+        {
+            totalSoldierCount += soldier.Count;
+        }
+
+        return totalSoldierCount;
+    }
+
+    private int ApplySoldierLosses(int losses)
+    {
+        if (Army.Count == 0)
+        {
+            return 0;
+        }
+
+        int totalSoldier = GetTotalSoldierCount();
+
+        if (losses > totalSoldier)
+        {
+            losses = totalSoldier;
+        }
+
+        int remainingLosses = losses;
+
+        Random random = new Random();
+
+        while (remainingLosses > 0 && Army.Count > 0)
+        {
+            int randomIndex = random.Next(0, Army.Count);
+
+            Soldier selectedGroup = Army[randomIndex];
+
+            selectedGroup.Count--;
+            remainingLosses--;
+
+            Console.WriteLine($"Lost 1 {selectedGroup.Type} Level {selectedGroup.Level}");
+
+            if (selectedGroup.Count <= 0)
+            {
+                Army.RemoveAt(randomIndex);
+            }
+        }
+
+        return losses;
     }
 }

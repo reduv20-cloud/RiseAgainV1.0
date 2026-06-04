@@ -1,29 +1,67 @@
 {
-  "Day": 1,
-  "Level": 1,
-  "Population": 10,
-  "Food": 50,
-  "Wood": 30,
-  "Stone": 20,
-  "Gold": 20,
+  "Day": 29,
+  "Level": 3,
+  "Population": 11,
+  "Food": 500,
+  "Wood": 174,
+  "Stone": 82,
+  "Gold": 5,
+  "Iron": 164,
   "Barracks": {
     "Name": "Barracks",
     "Level": 1
   },
   "Farms": {
     "Name": "Farms",
-    "Level": 1
+    "Level": 4
   },
-  "Mine": {
-    "Name": "Mine",
-    "Level": 1
+  "GoldMine": {
+    "Name": "Gold Mine",
+    "Level": 4
   },
   "StoneQuarry": {
     "Name": "Stone Quarry",
-    "Level": 1
+    "Level": 3
   },
   "LumberMill": {
     "Name": "Lumber Mill",
-    "Level": 1
-  }
+    "Level": 3
+  },
+  "TrainingBarracks": {
+    "Name": "Training Barracks",
+    "Level": 2
+  },
+  "IronMine": {
+    "Name": "Iron Mine",
+    "Level": 2
+  },
+  "IsGameOver": false,
+  "ThreatLevel": 13,
+  "Army": [
+    {
+      "Type": "Swordsman",
+      "Level": 1,
+      "Count": 1
+    },
+    {
+      "Type": "Archer",
+      "Level": 1,
+      "Count": 1
+    },
+    {
+      "Type": "Infantry",
+      "Level": 1,
+      "Count": 2
+    },
+    {
+      "Type": "Swordsman",
+      "Level": 2,
+      "Count": 3
+    },
+    {
+      "Type": "Archer",
+      "Level": 2,
+      "Count": 2
+    }
+  ]
 }
