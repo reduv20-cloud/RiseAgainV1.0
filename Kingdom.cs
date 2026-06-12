@@ -247,12 +247,10 @@
         Console.WriteLine($"{soldierType} Level {soldierLevel} trained");
     }
 
-    public void NextDay()
+    public DayReport NextDay()
     {
-        Console.Clear();
-
-        Console.WriteLine("A new day begins...");
-        Console.WriteLine();
+        DayReport report = new DayReport();
+        report.Day = Day;
 
         int foodProduced = Farms.Level * 10;
         int woodProduced = LumberMill.Level * 4;
@@ -266,13 +264,18 @@
         Iron += ironProduced;
         Gold += goldProduced;
 
-        Console.WriteLine($"Farms produced +{foodProduced} food");
-        Console.WriteLine($"Lumber Mill produced +{woodProduced} wood");
-        Console.WriteLine($"Stone Quarry produced +{stoneProduced} stone");
-        Console.WriteLine($"Iron Mine produced +{ironProduced} ores");
-        Console.WriteLine($"Gold Mine produced +{goldProduced} gold");
+        report.FoodProduced = foodProduced;
+        report.WoodProduced = woodProduced;
+        report.StoneProduced = stoneProduced;
+        report.IronProduced = ironProduced;
+        report.GoldProduced = goldProduced;
 
-        Console.WriteLine();
+        report.Messages.Add("A new day begins...");
+        report.Messages.Add($"Farms produced +{foodProduced} food");
+        report.Messages.Add($"Lumber Mill produced +{woodProduced} wood");
+        report.Messages.Add($"Stone Quarry produced +{stoneProduced} stone");
+        report.Messages.Add($"Iron Mine produced +{ironProduced} ores");
+        report.Messages.Add($"Gold Mine produced +{goldProduced} gold");
 
         int foodNeeded = GetDailyFoodConsumption();
 
@@ -280,7 +283,8 @@
         {
             Food -= foodNeeded;
 
-            Console.WriteLine($"Population consumed {foodNeeded} food rations");
+            report.FoodConsumed = foodNeeded;
+            report.Messages.Add($"Population consumed {foodNeeded} food rations");
         }
 
         else
@@ -296,28 +300,36 @@
                 Population = 0;
             }
 
-            Console.WriteLine($"Not enought food. The kingdom needed {foodNeeded} rations");
-            Console.WriteLine($"Missing rations: {missingFood}");
-            Console.WriteLine($"{peopleLost} people died from hunger");
+            report.StarvationHappening = true;
+            report.MissingFood = missingFood;
+            report.PeopleLostFromHunger = peopleLost;
+
+            report.Messages.Add($"Not enought food. The kingdom needed {foodNeeded} rations");
+            report.Messages.Add($"Missing rations: {missingFood}");
+            report.Messages.Add($"{peopleLost} people died from hunger");
 
             if (Population <= 0)
             {
                 IsGameOver = true;
 
-                Console.WriteLine();
-                Console.WriteLine("All people have died!");
-                Console.WriteLine("         GAME OVER");
+                report.Messages.Add("All people have died!");
+                report.Messages.Add("GAME OVER");
             }
 
-            return;
+            return report;
 
         }
 
-        IncreaseThreat();
+        int threathIncrease = IncreaseThreat();
+
+        report.ThreatIncrease = threathIncrease;
+        report.Messages.Add($"Threath increased by {threathIncrease}");
 
         TryEnemyAttack();
 
         Day++;
+
+        return report;
     }
 
     public void GrowPopulation()
@@ -569,7 +581,7 @@
         return totalPower;
     }
 
-    public void IncreaseThreat()
+    public int IncreaseThreat()
     {
         Random random = new Random();
 
@@ -577,7 +589,7 @@
 
         ThreatLevel += threatIncrease;
 
-        Console.WriteLine($"Threat incresed by {threatIncrease}");
+        return threatIncrease;
     }
 
     public string GetThreatStatus()

@@ -123,7 +123,8 @@
             switch (input)
             {
                 case "1":
-                    kingdom!.NextDay();
+                    DayReport dayReport = kingdom!.NextDay();
+                    ShowGameReport(dayReport);
                     SaveSystem.SaveGame(kingdom);
                     Pause();
                     break;
@@ -290,6 +291,22 @@
         Console.WriteLine();
         Console.WriteLine("Press ENTER to continue...");
         Console.ReadLine();
+    }
+
+    private void ShowGameReport(DayReport report)
+    {
+        Console.Clear();
+
+        Console.WriteLine("==========  DAY REPORT  ==========");
+        Console.WriteLine($"Day: {report.Day}");
+        Console.WriteLine();
+
+        foreach (string message in report.Messages)
+        {
+            Console.WriteLine(message);
+        }
+
+        Console.WriteLine("===================================");
     }
 
 }
