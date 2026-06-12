@@ -1,6 +1,4 @@
-﻿using System.IO.Pipes;
-
-public class Game
+﻿public class Game
 {
     private Kingdom? kingdom;
     private bool isRunning = true;
@@ -114,6 +112,8 @@ public class Game
             Console.WriteLine("10. Train Soldier");
             Console.WriteLine("11. Upgrade Training Barracks");
             Console.WriteLine("12. Upgrade Iron Mine");
+            Console.WriteLine("13. Upgrade Watch Tower");
+            Console.WriteLine("14. Upgrade Defensive Wall");
             Console.WriteLine("0. Save and return to main menu");
             Console.WriteLine();
 
@@ -141,31 +141,31 @@ public class Game
                     break;
 
                 case "4":
-                    kingdom!.UpgradeBuiling(kingdom.Farms);
+                    kingdom!.UpgradeBuilding(kingdom.Farms);
                     SaveSystem.SaveGame(kingdom);
                     Pause();
                     break;
 
                 case "5":
-                    kingdom!.UpgradeBuiling(kingdom.Barracks);
+                    kingdom!.UpgradeBuilding(kingdom.Barracks);
                     SaveSystem.SaveGame(kingdom);
                     Pause();
                     break;
 
                 case "6":
-                    kingdom!.UpgradeBuiling(kingdom.GoldMine);
+                    kingdom!.UpgradeBuilding(kingdom.GoldMine);
                     SaveSystem.SaveGame(kingdom);
                     Pause();
                     break;
 
                 case "7":
-                    kingdom!.UpgradeBuiling(kingdom.StoneQuarry);
-                    SaveSystem.SaveGame(kingdom); ;
+                    kingdom!.UpgradeBuilding(kingdom.StoneQuarry);
+                    SaveSystem.SaveGame(kingdom);
                     Pause();
                     break;
                 
                 case "8":
-                    kingdom!.UpgradeBuiling(kingdom.LumberMill);
+                    kingdom!.UpgradeBuilding(kingdom.LumberMill);
                     SaveSystem.SaveGame(kingdom);
                     Pause();
                     break;
@@ -182,13 +182,25 @@ public class Game
                     break;
 
                 case "11":
-                    kingdom!.UpgradeBuiling(kingdom.TrainingBarracks);
+                    kingdom!.UpgradeBuilding(kingdom.TrainingBarracks);
                     SaveSystem.SaveGame(kingdom);
                     Pause();
                     break;
 
                 case "12":
-                    kingdom!.UpgradeBuiling(kingdom!.IronMine);
+                    kingdom!.UpgradeBuilding(kingdom.IronMine);
+                    SaveSystem.SaveGame(kingdom);
+                    Pause();
+                    break;
+
+                case "13":
+                    kingdom!.UpgradeBuilding(kingdom.WatchTower);
+                    SaveSystem.SaveGame(kingdom);
+                    Pause();
+                    break;
+
+                case "14":
+                    kingdom!.UpgradeBuilding(kingdom.Wall);
                     SaveSystem.SaveGame(kingdom);
                     Pause();
                     break;
@@ -223,7 +235,7 @@ public class Game
         Console.WriteLine("4. Back");
         Console.WriteLine();
 
-        Console.WriteLine("Choosde an option:");
+        Console.WriteLine("Choose an option:");
         string? typeInput = Console.ReadLine();
 
         string soldierType;
@@ -266,7 +278,7 @@ public class Game
 
         if (soldierLevel < 1 || soldierLevel > kingdom.TrainingBarracks.Level)
         {
-            Console.WriteLine($"Invalid Level. You can train soldiers from lelev 1 to level {kingdom.TrainingBarracks.Level}");
+            Console.WriteLine($"Invalid Level. You can train soldiers from level 1 to level {kingdom.TrainingBarracks.Level}");
             return;
         }
 

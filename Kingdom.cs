@@ -52,10 +52,11 @@
 
     public int GetMaxPopulation()
     {
-        return 10 + Farms.Level * 5;
+        //return 10 + Farms.Level * 5;
+        return 10 + Barracks.Level * 5;
     }
 
-    public int GetDailyFoodConsumtion()
+    public int GetDailyFoodConsumption()
     {
         return Population;
     }
@@ -79,7 +80,7 @@
         Console.WriteLine();
         Console.WriteLine($"Population: {Population} / {GetMaxPopulation()}");
         Console.WriteLine($"Food: {Food}");
-        Console.WriteLine($"Daily rations needed: {GetDailyFoodConsumtion()}");
+        Console.WriteLine($"Daily rations needed: {GetDailyFoodConsumption()}");
         Console.WriteLine($"Wood: {Wood}");
         Console.WriteLine($"Stone: {Stone}");
         Console.WriteLine($"Iron: {Iron}");
@@ -121,7 +122,7 @@
         Console.WriteLine("===============================");
     }
 
-    public void EnsureBuildingsExisti()
+    public void EnsureBuildingsExist()
     {
         if (Barracks == null)
         {
@@ -133,31 +134,31 @@
         }
         if (GoldMine == null)
         {
-            Farms = new Building("Gold Mine", 1);
+            GoldMine = new Building("Gold Mine", 1);
         }
         if (IronMine == null)
         {
-            Farms = new Building("Iron Mine", 1);
+            IronMine = new Building("Iron Mine", 1);
         }
         if (StoneQuarry == null)
         {
-            Farms = new Building("Stone Quarry", 1);
+            StoneQuarry = new Building("Stone Quarry", 1);
         }
         if (LumberMill == null)
         {
-            Farms = new Building("Lumber Mill", 1);
+            LumberMill = new Building("Lumber Mill", 1);
         }
         if (TrainingBarracks == null)
         {
-            Farms = new Building("Training Barracks", 1);
+            TrainingBarracks = new Building("Training Barracks", 1);
         }
         if (WatchTower == null)
         {
-            Farms = new Building("Watch Tower", 1);
+            WatchTower = new Building("Watch Tower", 1);
         }
         if (Wall == null)
         {
-            Farms = new Building("Defensive Wall", 1);
+            Wall = new Building("Defensive Wall", 1);
         }
     }
 
@@ -273,7 +274,7 @@
 
         Console.WriteLine();
 
-        int foodNeeded = GetDailyFoodConsumtion();
+        int foodNeeded = GetDailyFoodConsumption();
 
         if (Food >= foodNeeded)
         {
@@ -312,12 +313,6 @@
 
         }
 
-        if (Day % 10 == 0)
-        {
-            Level++;
-            Console.WriteLine($"Kingdom reached level {Level}!");
-        }
-
         IncreaseThreat();
 
         TryEnemyAttack();
@@ -333,6 +328,7 @@
         {
             Console.WriteLine("Population cannot grow. Not enought housing.");
             Console.WriteLine("Upgrade Barracks to increase max population");
+            return;
         }
 
         int foodCost = 10;
@@ -358,7 +354,7 @@
         }
     }
 
-    public void UpgradeBuiling(Building building)
+    public void UpgradeBuilding(Building building)
     {
         int maxBuildingLevel = GetMaxBuildingLevel();
 
@@ -663,7 +659,7 @@
         int defensivePower = GetDefencePower();
         int totalDefencePower = armyPowerBeforeBattle + defensivePower;
 
-        bool playerWon = armyPowerBeforeBattle >= enemyPower;
+        bool playerWon = totalDefencePower >= enemyPower;
 
         int goldReward = 0;
         int ironReward = 0;

@@ -19,13 +19,13 @@ public static class SaveSystem
 
         Kingdom? kingdom = JsonSerializer.Deserialize<Kingdom>(json);
 
-        kingdom!.NormalizeBuildingNames();
-        kingdom.EnsureBuildingsExisti();
-
         if (kingdom == null)
         {
             return new Kingdom();
         }
+
+        kingdom.NormalizeBuildingNames();
+        kingdom.EnsureBuildingsExist();
 
         return kingdom;
     }
